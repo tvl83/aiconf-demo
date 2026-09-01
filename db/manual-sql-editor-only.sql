@@ -16,3 +16,11 @@ create policy "anon insert"
   for insert
   to anon
   with check (true);
+
+-- Belt and braces. A policy grants RLS permission, not table privilege — both are
+-- required. Supabase's default privileges normally cover this for tables the SQL
+-- editor creates in `public`, so this line is usually redundant; it is here because
+-- when it is NOT redundant the failure is `42501 permission denied for table
+-- registrations`, which the form reports as a generic "Something went wrong" with
+-- no hint that the cause is a missing grant. Cheap insurance, on stage.
+grant insert on table registrations to anon;
