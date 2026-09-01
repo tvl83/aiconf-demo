@@ -17,6 +17,20 @@ export class MissingSupabaseConfigError extends Error {
 }
 
 /**
+ * Whether this bundle was built with both Supabase env vars present.
+ *
+ * Both names are written out in full so Next inlines them at build time — a computed
+ * lookup like `process.env[name]` is not replaced and would always read as undefined
+ * in the browser. Call this to render the misconfiguration up front, on page load,
+ * instead of waiting for a form submit to fail.
+ */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
+/**
  * Browser Supabase client, created lazily on first use.
  *
  * Lazy on purpose: this is a static export (`output: 'export'`), so every page is

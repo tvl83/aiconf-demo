@@ -67,14 +67,20 @@ npm run dev
 npm run build   # emits ./out
 ```
 
-The build succeeds without Supabase env vars — the client is constructed lazily on first
-form submit, so a missing key surfaces as a runtime error instead of breaking CI.
+The build succeeds without Supabase env vars — deliberately, so a missing key never blocks a
+deploy. Instead the registration section renders an amber **"Registration is not configured"**
+panel in place of the form, baked into the prerendered HTML.
 
 ## Verify a deploy actually got the keys
 
 Because the build is green either way, **a ✅ Vercel deploy is not evidence the site works.**
-An unconfigured build fails only on form submit. Check the shipped bundle instead — this
-reads the page's chunk out of the HTML and looks for a baked Supabase URL:
+Two checks, either one is conclusive:
+
+**1. Open the page.** A form means configured. An amber "Registration is not configured" panel
+means the keys were missing at build time.
+
+**2. Check the shipped bundle** — reads the page's chunk out of the HTML and looks for a baked
+Supabase URL:
 
 ```bash
 SITE=https://your-project.vercel.app
@@ -86,9 +92,13 @@ A URL means the keys were present at build time. **No output means they were not
 both vars and trigger a *rebuild*; a rollback or re-alias reuses the old bundle and will
 not pick them up.
 
+The pattern must stay anchored on `https://` — a bare `grep supabase.co` false-passes, because
+the vendor chunk ships the literal string `*.supabase.co` regardless of configuration.
+
 Two distinct on-page failures, so you can tell them apart without the console:
 
-| Message under the form | Cause |
+| What you see | Cause |
 |---|---|
-| "This build is missing its Supabase keys…" | env vars absent at build time — rebuild |
+| Amber "Registration is not configured" instead of the form | env vars absent at build time — rebuild |
+| "This build is missing its Supabase keys…" under the form | same, caught at submit (fallback path) |
 | "Something went wrong. Please try again." | insert rejected — table missing, RLS, or grant |

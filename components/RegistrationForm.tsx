@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { createBrowserClient, MissingSupabaseConfigError } from '../lib/supabase';
+import {
+  createBrowserClient,
+  isSupabaseConfigured,
+  MissingSupabaseConfigError,
+} from '../lib/supabase';
 
 /** Postgres unique_violation — the email column has a unique constraint. */
 const UNIQUE_VIOLATION = '23505';
@@ -44,6 +48,30 @@ export default function RegistrationForm() {
           : 'Something went wrong. Please try again.'
       );
     }
+  }
+
+  // Build-time constant, so this renders into the prerendered HTML: an unconfigured
+  // deploy is obvious on page open rather than only when someone submits the form.
+  // Vercel still reports a green build — the page just says so out loud.
+  if (!isSupabaseConfigured()) {
+    return (
+      <section id="register" className="mx-auto max-w-md px-6 py-16">
+        <div
+          role="alert"
+          className="rounded-lg border border-amber-500/60 bg-amber-950/40 p-8 text-amber-200"
+        >
+          <h2 className="text-2xl font-bold tracking-tight text-amber-100">
+            Registration is not configured
+          </h2>
+          <p className="mt-3 text-sm">
+            This build went out without <code>NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
+            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>. Set both in the Vercel project and
+            trigger a <strong>rebuild</strong> — a static export bakes them in at build time,
+            so a rollback or re-alias will keep serving this same broken bundle.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   return (
