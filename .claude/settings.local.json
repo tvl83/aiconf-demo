@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/paperclip/instances/default/projects/ff6a949e-e9c2-47ca-a11e-bb732834552a/a7ece728-dfcb-4e17-aaf6-d4a14b76036b/_default/scripts/paperclip-issue-update.sh:*)",
+      "Bash(/paperclip/instances/default/projects/ff6a949e-e9c2-47ca-a11e-bb732834552a/a7ece728-dfcb-4e17-aaf6-d4a14b76036b/_default/scripts/paperclip:*)",
+      "Bash(curl:*)",
+      "Bash(env)",
+      "Bash(env:*)"
+    ],
+    "additionalDirectories": [
+      "/paperclip/instances/default/companies/ff6a949e-e9c2-47ca-a11e-bb732834552a",
+      "/paperclip/instances/default/companies/ff6a949e-e9c2-47ca-a11e-bb732834552a/acp-engine/agents/a4edb6a9-b9f9-483b-a636-8f6fae52d04e",
+      "/paperclip/instances/default/workspaces/a4edb6a9-b9f9-483b-a636-8f6fae52d04e"
+    ],
+    "defaultMode": "default"
+  }
+}
