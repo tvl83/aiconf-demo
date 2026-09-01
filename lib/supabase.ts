@@ -3,6 +3,20 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 let client: SupabaseClient | null = null;
 
 /**
+ * Thrown when the bundle was built without the Supabase env vars.
+ *
+ * `NEXT_PUBLIC_*` is inlined at build time, so a deploy that built before the vars
+ * were set stays broken until it is rebuilt — setting them afterwards is not enough.
+ * Distinct from an insert failure so the UI can say which one happened.
+ */
+export class MissingSupabaseConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'MissingSupabaseConfigError';
+  }
+}
+
+/**
  * Browser Supabase client, created lazily on first use.
  *
  * Lazy on purpose: this is a static export (`output: 'export'`), so every page is
@@ -18,7 +32,7 @@ export function createBrowserClient(): SupabaseClient {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
-    throw new Error(
+    throw new MissingSupabaseConfigError(
       'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
         'Set both in the Vercel project settings and redeploy.'
     );

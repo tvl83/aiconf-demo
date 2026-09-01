@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { createBrowserClient } from '../lib/supabase';
+import { createBrowserClient, MissingSupabaseConfigError } from '../lib/supabase';
 
 /** Postgres unique_violation — the email column has a unique constraint. */
 const UNIQUE_VIOLATION = '23505';
@@ -36,9 +36,13 @@ export default function RegistrationForm() {
           ? "You're already registered."
           : 'Something went wrong. Please try again.'
       );
-    } catch {
+    } catch (err) {
       setStatus('idle');
-      setError('Something went wrong. Please try again.');
+      setError(
+        err instanceof MissingSupabaseConfigError
+          ? 'This build is missing its Supabase keys — set them in Vercel and redeploy.'
+          : 'Something went wrong. Please try again.'
+      );
     }
   }
 
