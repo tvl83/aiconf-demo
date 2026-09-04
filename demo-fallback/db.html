@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>registrations — table editor</title>
+<!--
+  AIC-5 offline fallback: the "show the row in the database" beat.
+
+  Without Supabase credentials there is no dashboard to switch to, and that beat
+  is the one the audience actually cares about -- it is the proof the form was
+  not a piece of theatre. This renders the same rows the page just wrote, in the
+  shape the Supabase table editor renders them, and polls so a row appears while
+  the founder is looking at it.
+
+  It reads /admin/rows, which is the equivalent of running the SELECT in the
+  Supabase SQL editor: that runs as the table owner and bypasses RLS. The anon
+  path (/rest/v1/registrations) still returns 401, as it does in production.
+-->
+<style>
+  :root { --bg:#1c1c1c; --panel:#232323; --line:#333; --text:#ededed; --muted:#8f8f8f; --green:#3ecf8e; }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  header {
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    padding: clamp(14px,2vw,24px) clamp(16px,3vw,36px); border-bottom:1px solid var(--line);
+  }
+  .dot { width:10px; height:10px; border-radius:99px; background:var(--green); }
+  h1 { font-size: clamp(15px,1.8vw,24px); margin:0; font-weight:600; }
+  .path { color:var(--muted); font-size: clamp(12px,1.3vw,17px); }
+  .count { margin-left:auto; color:var(--muted); font-size: clamp(12px,1.3vw,17px); }
+  main { padding: clamp(12px,2vw,28px) clamp(16px,3vw,36px); overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-size: clamp(12px,1.5vw,20px); }
+  th, td { text-align:left; padding:.62em .9em; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; background:var(--panel); position:sticky; top:0; }
+  td.id { color:var(--muted); }
+  tr.fresh { animation: flash 2.2s ease-out 1; }
+  @keyframes flash { from { background:#14503a; } to { background:transparent; } }
+  .empty { color:var(--muted); padding: 2.5em 0; font-size: clamp(13px,1.5vw,20px); }
+  .err { color:#f87171; padding: 2.5em 0; }
+</style>
+</head>
+<body>
+<header>
+  <span class="dot"></span>
+  <h1>registrations</h1>
+  <span class="path">public · table editor</span>
+  <span class="count" id="count"></span>
+</header>
+<main id="main"><p class="empty">Loading…</p></main>
+
+<script>
+(function () {
+  var seen = {};
+  var first = true;
+
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function render(rows) {
+    document.getElementById('count').textContent =
+      rows.length + (rows.length === 1 ? ' row' : ' rows');
+
+    if (!rows.length) {
+      document.getElementById('main').innerHTML =
+        '<p class="empty">No rows yet. Submit the form and this fills in.</p>';
+      return;
+    }
+
+    var html = '<table><thead><tr><th>id</th><th>name</th><th>email</th><th>created_at</th></tr></thead><tbody>';
+    rows.slice().reverse().forEach(function (r) {
+      var isNew = !first && !seen[r.id];
+      seen[r.id] = true;
+      html += '<tr class="' + (isNew ? 'fresh' : '') + '">' +
+              '<td class="id">' + esc(r.id) + '</td>' +
+              '<td>' + esc(r.name) + '</td>' +
+              '<td>' + esc(r.email) + '</td>' +
+              '<td>' + esc(r.created_at) + '</td></tr>';
+    });
+    document.getElementById('main').innerHTML = html + '</tbody></table>';
+    first = false;
+  }
+
+  function poll() {
+    fetch('/admin/rows', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(render)
+      .catch(function () {
+        document.getElementById('main').innerHTML =
+          '<p class="err">Cannot reach the local server. Is <code>node demo-fallback/serve.mjs</code> still running?</p>';
+      });
+  }
+
+  poll();
+  setInterval(poll, 1000);
+})();
+</script>
+</body>
+</html>

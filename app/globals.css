@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+/* Design tokens — AIC-7 spec §1, dark set from §7.
+ *
+ * The Designer specified light as primary and dark as the fallback, flagging the
+ * choice as the founder's call. AIC-4 and PRD §7 both say dark (`bg-gray-950`),
+ * so the dark set ships. Swapping to light is this one block and nothing else —
+ * no markup changes. The light values are kept below, commented, for that swap.
+ *
+ * :root {
+ *   --paper: #FFFFFF; --ink: #0A0A0A; --ink-2: #33333B;
+ *   --accent: #1A38D6; --error: #B00018; --success: #0A5C2D;
+ *   --success-ink: #FFFFFF;
+ * }
+ */
+:root {
+  --paper: #0b0b0f;
+  --ink: #ffffff; /* 19.6:1 */
+  --ink-2: #c9c9d2; /* 11.9:1 */
+  --accent: #9db4ff; /*  9.7:1 */
+  --error: #ff9a93; /*  9.6:1 */
+  --success: #5ee08d; /* 11.7:1 */
+  --success-ink: #0b0b0f; /* ink on the disc in dark mode, not white */
+
+  --r: 10px;
+  --r-card: 20px;
+
+  /* Placeholder is the one string allowed under the 7:1 floor. */
+  --placeholder: #8b8b99;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family:
+    system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- §3 · The fold ------------------------------------------------------- */
+
+.fold {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: clamp(48px, 5vw, 96px);
+  padding: clamp(40px, 5vh, 96px) clamp(24px, 5vw, 96px);
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+@media (max-width: 1023px) {
+  .fold {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    min-height: auto;
+  }
+}
+
+.hero-stack {
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+}
+
+.eyebrow {
+  font-size: clamp(18px, 1.25vw, 24px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin: 0;
+}
+
+.h1 {
+  font-size: clamp(44px, 5.5vw, 106px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  max-width: 12ch;
+  margin: 0;
+}
+
+.subhead {
+  font-size: clamp(20px, 2.1vw, 40px);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink-2);
+  max-width: 20ch;
+  margin: 0;
+}
+
+.btn-hero {
+  margin-top: 16px; /* 24px stack gap + 16px = 40px before the CTA */
+  background: transparent;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: var(--r);
+  padding: 16px 32px;
+  font-size: clamp(20px, 1.8vw, 34px);
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn-hero:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* --- §4 · The form card -------------------------------------------------- */
+
+.card {
+  width: min(100%, 544px);
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: var(--r-card);
+  padding: clamp(28px, 3vw, 56px);
+  box-shadow: 12px 12px 0 var(--ink); /* hard offset, zero blur */
+  display: grid;
+  gap: 24px;
+  justify-self: end;
+}
+
+@media (max-width: 1023px) {
+  .card {
+    justify-self: center;
+  }
+}
+
+.card form {
+  display: grid;
+  gap: 24px;
+}
+
+.card-heading {
+  font-size: clamp(24px, 2.2vw, 42px);
+  font-weight: 800;
+  margin: 0;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  font-size: clamp(16px, 1.15vw, 22px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.field input {
+  width: 100%;
+  height: clamp(56px, 5.2vh, 76px);
+  padding-inline: 20px;
+  font-size: clamp(20px, 1.9vw, 36px);
+  font-weight: 500;
+  border: 3px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.field input::placeholder {
+  color: var(--placeholder);
+}
+
+.field input[aria-invalid="true"] {
+  border-color: var(--error);
+  border-width: 4px;
+}
+
+:is(input, button, a):focus-visible {
+  outline: 4px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn-register {
+  width: 100%;
+  height: clamp(64px, 6vh, 88px);
+  font-size: clamp(22px, 2vw, 38px);
+  font-weight: 800;
+  background: var(--ink);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+
+.btn-register:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.btn-register:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+/* --- §5 · States --------------------------------------------------------- */
+
+/* Reserved so nothing jumps mid-demo when a message appears. */
+.msg {
+  min-height: 1.5em;
+  font-size: clamp(18px, 1.6vw, 30px);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--error);
+  margin: 0;
+}
+
+.field .msg {
+  font-size: clamp(16px, 1.3vw, 24px);
+}
+
+.success {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.success .disc {
+  width: clamp(72px, 7vw, 128px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--success);
+  color: var(--success-ink);
+  display: grid;
+  place-items: center;
+  font-size: clamp(40px, 4vw, 72px);
+  line-height: 1;
+}
+
+.success h2 {
+  font-size: clamp(36px, 3.6vw, 68px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.success h2:focus-visible {
+  outline: 4px solid var(--accent);
+  outline-offset: 6px;
+}
+
+.success p {
+  font-size: clamp(20px, 2vw, 36px);
+  font-weight: 500;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.btn-reset {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: clamp(16px, 1.3vw, 22px);
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- §6 · Below the fold ------------------------------------------------- */
+
+.section {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: clamp(64px, 8vh, 128px) clamp(24px, 5vw, 96px);
+}
+
+.section h2 {
+  font-size: clamp(32px, 3.2vw, 60px);
+  font-weight: 800;
+  margin: 0 0 40px;
+}
+
+/* The rule has to run unbroken across both columns, so it lives on the row
+ * rather than on each cell -- a column-gap would otherwise slice it in two.
+ * The time column is a fixed width instead of max-content so the sessions stay
+ * aligned down the page now that each row is its own grid. */
+.agenda {
+  display: grid;
+}
+
+.agenda-row {
+  display: grid;
+  grid-template-columns: clamp(120px, 11vw, 200px) 1fr;
+  column-gap: 40px;
+  align-items: baseline;
+  padding-block: 20px;
+  border-top: 2px solid var(--ink);
+}
+
+.agenda .time,
+.agenda .session {
+  margin: 0;
+}
+
+.agenda .time {
+  font-size: clamp(18px, 1.7vw, 32px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda .session {
+  font-size: clamp(20px, 1.9vw, 36px);
+  font-weight: 500;
+}
+
+.speakers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.speaker {
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 32px;
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+
+.speaker .avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.speaker h3 {
+  font-size: clamp(20px, 1.8vw, 34px);
+  font-weight: 800;
+  margin: 0;
+}
+
+.speaker .title,
+.speaker .bio {
+  font-size: clamp(16px, 1.3vw, 24px);
+  font-weight: 500;
+  color: var(--ink-2);
+  margin: 0;
+}

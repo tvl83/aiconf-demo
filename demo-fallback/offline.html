@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Conf 2025 — Register</title>
+<!--
+  AIC-5 offline fallback. Demo Producer owns this file.
+
+  Content is PRD §5 verbatim: hero, agenda, speakers, registration form, and the
+  three form outcomes. Styling approximates PRD §7 (dark, gray-950, centered
+  max-w-md card) in plain CSS, because Tailwind needs a build step and this file
+  must open with no build, no npm, and no network.
+
+  Two modes, chosen automatically:
+    served over http  -> posts to /rest/v1/registrations on this origin
+    opened as file:// -> keeps rows in memory, so it still works with no server
+-->
+<style>
+  :root {
+    --bg: #030712;      /* gray-950 */
+    --panel: #0b1220;
+    --line: #1f2937;    /* gray-800 */
+    --text: #f9fafb;    /* gray-50  */
+    --muted: #9ca3af;   /* gray-400 */
+    --accent: #6366f1;  /* indigo-500 */
+    --ok: #34d399;
+    --bad: #f87171;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Projector sizing: everything scales off viewport width so the back row can
+     read it, without becoming absurd on a laptop screen. */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 56px); }
+  section { padding: clamp(40px, 6vw, 96px) 0; }
+
+  /* hero */
+  .hero { text-align: center; padding-top: clamp(56px, 9vw, 140px); }
+  .eyebrow {
+    color: var(--muted); letter-spacing: .18em; text-transform: uppercase;
+    font-size: clamp(11px, 1.1vw, 15px); margin: 0 0 clamp(14px, 1.6vw, 22px);
+  }
+  h1 {
+    font-size: clamp(40px, 7.5vw, 116px); line-height: 1.02; margin: 0;
+    letter-spacing: -0.03em; font-weight: 800;
+  }
+  .tagline { font-size: clamp(17px, 2.2vw, 30px); color: var(--muted); margin: clamp(16px,2vw,28px) 0 0; }
+  .date {
+    display: inline-block; margin-top: clamp(18px, 2.2vw, 30px);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: .5em 1.2em; color: var(--text); font-size: clamp(13px, 1.4vw, 19px);
+  }
+  .cta {
+    display: inline-block; margin-top: clamp(26px, 3.4vw, 48px);
+    background: var(--accent); color: #fff; text-decoration: none;
+    font-size: clamp(16px, 1.9vw, 26px); font-weight: 600;
+    padding: .72em 1.7em; border-radius: 12px;
+  }
+  .cta:hover { filter: brightness(1.12); }
+
+  h2 {
+    font-size: clamp(24px, 3.4vw, 46px); margin: 0 0 clamp(20px, 2.6vw, 40px);
+    letter-spacing: -0.02em;
+  }
+
+  /* agenda */
+  .agenda { border-top: 1px solid var(--line); }
+  .slot {
+    display: flex; gap: clamp(16px, 3vw, 48px); align-items: baseline;
+    padding: clamp(12px, 1.5vw, 22px) 0; border-bottom: 1px solid var(--line);
+    font-size: clamp(15px, 1.8vw, 25px);
+  }
+  .slot time { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 5.5em; }
+
+  /* speakers */
+  .cards { display: flex; flex-wrap: wrap; gap: clamp(14px, 1.8vw, 26px); }
+  .card {
+    flex: 1 1 260px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 16px; padding: clamp(18px, 2.2vw, 32px);
+  }
+  .avatar {
+    width: clamp(44px, 5vw, 68px); height: clamp(44px, 5vw, 68px); border-radius: 999px;
+    display: grid; place-items: center; font-weight: 700; color: #fff;
+    font-size: clamp(16px, 1.8vw, 24px); margin-bottom: clamp(12px, 1.4vw, 20px);
+  }
+  .card h3 { margin: 0; font-size: clamp(17px, 1.9vw, 26px); }
+  .card .role { color: var(--accent); margin: .3em 0 .8em; font-size: clamp(13px, 1.4vw, 18px); }
+  .card p.line { margin: 0; color: var(--muted); font-size: clamp(14px, 1.5vw, 20px); }
+
+  /* form */
+  .register { border-top: 1px solid var(--line); }
+  .cardform {
+    max-width: 480px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 18px; padding: clamp(22px, 3vw, 44px);
+  }
+  label { display: block; font-size: clamp(13px, 1.3vw, 17px); color: var(--muted); margin-bottom: .45em; }
+  input {
+    width: 100%; background: #030712; color: var(--text);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: .78em .9em; font-size: clamp(15px, 1.6vw, 21px); margin-bottom: clamp(14px, 1.6vw, 22px);
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    width: 100%; background: var(--accent); color: #fff; border: 0; border-radius: 10px;
+    padding: .8em 1em; font-size: clamp(16px, 1.7vw, 23px); font-weight: 600; cursor: pointer;
+  }
+  button[disabled] { opacity: .6; cursor: default; }
+  .msg { margin: clamp(12px,1.4vw,18px) 0 0; font-size: clamp(14px, 1.5vw, 20px); min-height: 1.5em; }
+  .msg.bad { color: var(--bad); }
+  .done { text-align: center; }
+  .done .tick { font-size: clamp(34px, 4.5vw, 62px); color: var(--ok); line-height: 1; }
+  .done p { font-size: clamp(18px, 2.2vw, 30px); margin: .6em 0 0; font-weight: 600; }
+  .done .again {
+    background: none; border: 0; color: var(--muted); text-decoration: underline;
+    width: auto; font-size: clamp(13px,1.3vw,17px); margin-top: 1.2em; font-weight: 400;
+  }
+  footer { color: var(--muted); font-size: 13px; text-align: center; padding: 40px 0 60px; }
+  .offlinebadge {
+    position: fixed; top: 10px; right: 12px; z-index: 5;
+    background: #1f2937; color: #9ca3af; border: 1px solid #374151;
+    border-radius: 999px; padding: 5px 12px; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="offlinebadge" id="badge">offline fallback</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">September 6, 2025 · San Francisco</p>
+    <h1>AI Conf 2025</h1>
+    <p class="tagline">The future of AI, live in San Francisco</p>
+    <div><span class="date">September 6, 2025</span></div>
+    <a class="cta" href="#register">Register Now</a>
+  </section>
+
+  <section class="agenda">
+    <h2>Agenda</h2>
+    <div class="slot"><time>9:00 AM</time><span>Opening Keynote</span></div>
+    <div class="slot"><time>10:30 AM</time><span>Panel: Building with AI Agents</span></div>
+    <div class="slot"><time>12:00 PM</time><span>Lunch</span></div>
+    <div class="slot"><time>1:30 PM</time><span>Workshop: Live Build with Paperclip</span></div>
+    <div class="slot"><time>3:30 PM</time><span>Closing Remarks</span></div>
+  </section>
+
+  <section class="speakers">
+    <h2>Speakers</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="avatar" style="background:#6366f1">JS</div>
+        <h3>Jane Smith</h3>
+        <p class="role">CEO, FutureTech</p>
+        <p class="line">Building AI-first products since 2018.</p>
+      </div>
+      <div class="card">
+        <div class="avatar" style="background:#0ea5e9">ML</div>
+        <h3>Marcus Lee</h3>
+        <p class="role">Research Lead, DeepSystems</p>
+        <p class="line">Former Google Brain; now open-source AI.</p>
+      </div>
+      <div class="card">
+        <div class="avatar" style="background:#f59e0b">PP</div>
+        <h3>Priya Patel</h3>
+        <p class="role">Founder, AgentLabs</p>
+        <p class="line">Shipped the first production agentic workflow in 2024.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="register" id="register">
+    <h2>Register</h2>
+    <div class="cardform" id="card">
+      <form id="form" novalidate>
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required />
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="you@example.com"
+               autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" required />
+        <button type="submit" id="submit">Register</button>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer>AI Conf 2025 · running locally, no internet required</footer>
+</div>
+
+<script>
+(function () {
+  var SERVED = location.protocol === 'http:' || location.protocol === 'https:';
+  var memory = [];   // used only when opened as file://
+  var badge = document.getElementById('badge');
+  badge.textContent = SERVED ? 'offline fallback · local server' : 'offline fallback · no server';
+
+  var form = document.getElementById('form');
+  var card = document.getElementById('card');
+  var msg = document.getElementById('msg');
+  var submit = document.getElementById('submit');
+
+  function fail(text) {
+    msg.textContent = text;
+    msg.className = 'msg bad';
+    submit.disabled = false;
+    submit.textContent = 'Register';
+  }
+
+  // Success replaces the form outright. On a projector the only thing left on
+  // the wall should be the fact that it worked.
+  function succeed() {
+    card.innerHTML =
+      '<div class="done"><div class="tick">&#10003;</div>' +
+      '<p>You’re registered! See you September 6.</p>' +
+      '<button class="again" id="again">Register someone else</button></div>';
+    document.getElementById('again').onclick = function () { location.reload(); };
+  }
+
+  // Mirrors the real app: POST /rest/v1/registrations, never a .select(), and a
+  // 23505 unique violation is a person who already registered.
+  function insert(row) {
+    if (!SERVED) {
+      var dupe = memory.some(function (r) {
+        return r.email.toLowerCase() === row.email.toLowerCase();
+      });
+      if (dupe) return Promise.resolve({ code: '23505' });
+      memory.push(row);
+      return Promise.resolve(null);
+    }
+    return fetch('/rest/v1/registrations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify(row)
+    }).then(function (r) {
+      if (r.status === 201) return null;
+      return r.json().then(function (b) { return b || { code: 'unknown' }; },
+                           function () { return { code: 'unknown' }; });
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (submit.disabled) return;
+
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+
+    if (!name)  return fail('Please enter your name.');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return fail('Please enter a valid email address.');
+
+    msg.textContent = '';
+    msg.className = 'msg';
+    submit.disabled = true;
+    submit.textContent = 'Registering…';
+
+    insert({ name: name, email: email }).then(function (err) {
+      if (!err) return succeed();
+      if (err.code === '23505') return fail('You’re already registered.');
+      fail('Something went wrong. Please try again.');
+    }).catch(function () {
+      fail('Something went wrong. Please try again.');
+    });
+  });
+})();
+</script>
+</body>
+</html>
